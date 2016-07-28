@@ -36,7 +36,7 @@ To install Eagle on a sandbox you need to run a HDP sandbox image in a virtual m
 
     * **Option 1**: Download eagle jar from [here](http://66.211.190.194/eagle-0.1.0.tar.gz).
 
-    * **Option 2**: Build form source code [eagle github](https://github.com/eBay/Eagle). After successful build, ‘eagle-xxx-bin.tar.gz’ will be generated under `./eagle-assembly/target` (please refer to[Setup Development Environment on Mac](https://github.com/apache/incubator-eagle/blob/master/eagle-tutorial/SetupDevelopmentEnvOnMac.md) if you have any issues during the maven build.)
+    * **Option 2**: Build form source code [eagle github](https://github.com/apache/incubator-eagle). After successful build, ‘eagle-xxx-bin.tar.gz’ will be generated under `./eagle-assembly/target` (please refer to[Setup Development Environment on Mac](https://github.com/apache/incubator-eagle/blob/master/eagle-tutorial/SetupDevelopmentEnvOnMac.md) if you have any issues during the maven build.)
 
           # installed npm is required before compiling
           $ mvn clean install -DskipTests=true

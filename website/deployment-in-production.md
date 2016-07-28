@@ -97,7 +97,7 @@ Here's the main content of this page:
      ![setup a site](/images/docs/new-site.png)
 * Step 3: Create site related configuration files for topologies
 
-     Please refer to [samples](https://github.com/eBay/Eagle/tree/master/eagle-assembly/src/main/conf), and create a configuration file for each chosen datasource under $EAGLE_HOME/conf/.
+     Please refer to [samples](https://github.com/apache/incubator-eagle/tree/master/eagle-assembly/src/main/conf), and create a configuration file for each chosen datasource under $EAGLE_HOME/conf/.
         More descriptions are [here](/docs/configuration.html)
 * Step 4: Submit topologies
 
