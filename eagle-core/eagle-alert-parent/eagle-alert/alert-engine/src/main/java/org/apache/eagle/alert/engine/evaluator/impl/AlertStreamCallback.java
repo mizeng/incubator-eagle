@@ -61,7 +61,7 @@ public class AlertStreamCallback extends StreamCallback {
         String policyName = context.getPolicyDefinition().getName();
         CompositePolicyHandler handler = ((PolicyGroupEvaluatorImpl)context.getPolicyEvaluator()).getPolicyHandler(policyName);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Generated {} alerts from policy '{}' in {}, index of definiton {} ", events.length, policyName, context.getPolicyEvaluatorId(), currentIndex);
+            LOG.debug("Generated {} alerts from policy '{}' in {}, index of definition {} ", events.length, policyName, context.getPolicyEvaluatorId(), currentIndex);
         }
         for (Event e : events) {
             AlertStreamEvent event = new AlertStreamEvent();
