@@ -57,6 +57,8 @@ public class MockSampleMetadataFactory {
         streamColumns.add(new StreamColumn.Builder().name("flag").type(StreamColumn.Type.BOOL).build());
         streamColumns.add(new StreamColumn.Builder().name("timestamp").type(StreamColumn.Type.LONG).build());
         streamColumns.add(new StreamColumn.Builder().name("value").type(StreamColumn.Type.DOUBLE).build());
+        streamColumns.add(new StreamColumn.Builder().name("alertKey").type(StreamColumn.Type.STRING).build());
+        streamColumns.add(new StreamColumn.Builder().name("totalPortNum").type(StreamColumn.Type.LONG).build());
         sampleStreamDefinition.setColumns(streamColumns);
         return sampleStreamDefinition;
     }

@@ -156,4 +156,107 @@ public class SiddhiCEPPolicyEventHandlerTest {
         Assert.assertEquals("joinedStream", alerts.get(0).getStreamId());
         Assert.assertEquals("cpu", alerts.get(0).getData()[1]);
     }
+
+    @Test
+    public void testWithCorrelationPolicy() throws Exception {
+        Map<String,StreamDefinition> ssd = createDefinition("sampleStream_1");
+
+        PolicyDefinition policyDefinition = new PolicyDefinition();
+        policyDefinition.setName("SampleCorrelationPolicyForTest");
+        policyDefinition.setInputStreams(Arrays.asList("sampleStream_1"));
+        policyDefinition.setOutputStreams(Collections.singletonList("outputStream"));
+        policyDefinition.setDefinition(new PolicyDefinition.Definition(PolicyStreamHandlers.SIDDHI_ENGINE,
+                "from sampleStream_1#window.lengthBatch(4) select alertKey,count(value) as cnt,totalPortNum group by alertKey having (cnt>=0.5*totalPortNum)  insert current events into outputStream "));
+        policyDefinition.setPartitionSpec(Collections.singletonList(MockSampleMetadataFactory.createSampleStreamGroupbyPartition("sampleStream_1", Collections.singletonList("name"))));
+        SiddhiPolicyHandler handler;
+        Semaphore mutex = new Semaphore(0);
+        List<AlertStreamEvent> alerts = new ArrayList<>(0);
+        Collector<AlertStreamEvent> collector = (event) -> {
+            LOG.info("Collected {}",event);
+            Assert.assertTrue(event != null);
+            alerts.add(event);
+            mutex.release();
+        };
+
+        handler = new SiddhiPolicyHandler(ssd, 0);
+        PolicyHandlerContext context = new PolicyHandlerContext();
+        context.setPolicyDefinition(policyDefinition);
+        context.setPolicyCounter(new MultiCountMetric());
+        context.setPolicyEvaluator(new PolicyGroupEvaluatorImpl("evaluatorId"));
+        handler.prepare(collector, context);
+
+        long ts_1 = System.currentTimeMillis();
+
+
+        handler.send(StreamEvent.builder()
+                .schema(ssd.get("sampleStream_1"))
+                .streamId("sampleStream_1")
+                .timestamep(ts_1)
+                .attributes(new HashMap<String,Object>(){{
+                    put("name","port1");
+                    put("alertKey","switch1");
+                    put("totalPortNum", 4);
+                    put("value", 1);
+                }}).build());
+
+        handler.send(StreamEvent.builder()
+                .schema(ssd.get("sampleStream_1"))
+                .streamId("sampleStream_1")
+                .timestamep(ts_1)
+                .attributes(new HashMap<String,Object>(){{
+                    put("name","port2");
+                    put("alertKey","switch1");
+                    put("totalPortNum", 4);
+                    put("value", 1);
+                }}).build());
+
+        handler.send(StreamEvent.builder()
+                .schema(ssd.get("sampleStream_1"))
+                .streamId("sampleStream_1")
+                .timestamep(ts_1)
+                .attributes(new HashMap<String,Object>(){{
+                    put("name","port3");
+                    put("alertKey","switch1");
+                    put("totalPortNum", 4);
+                    put("value", 1);
+                }}).build());
+
+        handler.send(StreamEvent.builder()
+                .schema(ssd.get("sampleStream_1"))
+                .streamId("sampleStream_1")
+                .timestamep(ts_1)
+                .attributes(new HashMap<String,Object>(){{
+                    put("name","port11");
+                    put("alertKey","switch2");
+                    put("totalPortNum", 4);
+                    put("value", 1);
+                }}).build());
+
+//        for (int i=0; i<3; i++){
+//            final double value = 62.0+i;
+//            handler.send(StreamEvent.builder()
+//                    .schema(ssd.get("sampleStream_1"))
+//                    .streamId("sampleStream_1")
+//                    .timestamep(ts_1)
+//                    .attributes(new HashMap<String, Object>() {{
+//                        put("name", "cpu");
+//                        put("value", value);
+//                    }}).build());
+//        }
+
+        handler.close();
+
+        Assert.assertTrue("Should get result in 5 s", mutex.tryAcquire(5, TimeUnit.SECONDS));
+//        Assert.assertEquals("outputStream", alerts.get(0).getStreamId());
+//        Assert.assertEquals("cpu", alerts.get(0).getData()[0]);
+//        Assert.assertEquals(61.0, alerts.get(0).getData()[1]);
+//        Assert.assertEquals(2l, alerts.get(0).getData()[2]);
+//        Assert.assertEquals(61.0, alerts.get(0).getData()[3]);
+//        Assert.assertEquals(60.0, alerts.get(0).getData()[4]);
+//        Assert.assertEquals(2, alerts.size());
+
+        for (AlertStreamEvent ae: alerts){
+            System.out.println(ae);
+        }
+    }
 }
