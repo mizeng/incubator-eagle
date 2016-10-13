@@ -65,8 +65,12 @@ public class CoordinatorTrigger implements Runnable {
 
                 ScheduleState state = scheduler.schedule(new ScheduleOption());
 
-                ConfigBusProducer producer = new ConfigBusProducer(ZKConfigBuilder.getZKConfig(config));
-                Coordinator.postSchedule(client, state, producer);
+                try {
+                    ConfigBusProducer producer = new ConfigBusProducer(ZKConfigBuilder.getZKConfig(config));
+                    Coordinator.postSchedule(client, state, producer);
+                } catch (Exception e){
+                    
+                }
 
                 watch.stop();
                 LOG.info("CoordinatorTrigger ended, used time {} sm.", watch.elapsed(TimeUnit.MILLISECONDS));
